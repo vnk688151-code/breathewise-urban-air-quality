@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#06140e">
+<title>BreatheWise | Urban Air Quality Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&amp;family=Noto+Sans+Telugu:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06140e;--card:#0f241b;--line:#264636;--tx:#eef8f1;--mu:#9fb7a9;--mint:#8fe8b6;--g:#4fd48f;--ac:#4fd48f}
+*{box-sizing:border-box}
+body{margin:0;color:var(--tx);font-family:"DM Sans","Noto Sans Telugu",system-ui,sans-serif;background:radial-gradient(900px 500px at 50% -10%,#245c40,transparent 70%),var(--bg);min-height:100vh}
+.wrap{max-width:1120px;margin:auto;padding:0 18px}
+button{font:inherit;cursor:pointer}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-weight:800;font-size:22px;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}.brand b{color:var(--mint)}
+.logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#1d5a3a,#2f8f5f);color:#eafff3}
+.seg{display:flex;background:#0c1f16;border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:none;color:var(--mu);padding:8px 14px;border-radius:9px;font-weight:600}.seg .on{background:var(--g);color:#05200f}
+.hero{padding:38px 0 14px;max-width:780px}
+.eb{font-size:11px;letter-spacing:1.6px;color:var(--mint);font-weight:700;text-transform:uppercase}
+h1{font-size:clamp(34px,6vw,60px);line-height:1.1;letter-spacing:-2px;margin:12px 0}
+.hero p,.mu{color:var(--mu);line-height:1.65}
+.sw{position:relative;margin-top:20px}
+.search{display:flex;gap:8px;background:#0c2118;border:1px solid var(--line);border-radius:16px;padding:7px 7px 7px 14px;align-items:center;backdrop-filter:blur(8px)}
+.search input,.ask input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--tx);font:inherit;padding:10px 4px}
+.btn{border:0;background:var(--g);color:#05200f;font-weight:800;padding:12px 18px;border-radius:11px}
+.gps{background:none;border:0;color:var(--mint);padding:12px 2px;font-weight:600}
+.sug{position:absolute;left:0;right:0;top:100%;margin-top:6px;background:#0d2219;border:1px solid var(--line);border-radius:14px;overflow:hidden;z-index:5;display:none}
+.sug button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--tx);padding:12px 16px;border-bottom:1px solid #ffffff10}.sug button:hover{background:#163425}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;padding:18px 0 40px}
+.card{background:linear-gradient(150deg,#14301f 0%,#0d2017 100%);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 18px 40px #0003}
+.c12{grid-column:span 12}.c7{grid-column:span 7}.c5{grid-column:span 5}.c6{grid-column:span 6}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+h2{font-size:19px;margin:4px 0 2px}h3{margin:10px 0 4px}
+.aq{display:flex;gap:26px;align-items:center;padding:18px 0;flex-wrap:wrap}
+.ring{--p:0;width:150px;height:150px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--ac) calc(var(--p)*1%),#ffffff14 0);position:relative}
+.ring:before{content:"";position:absolute;inset:11px;background:#0d2017;border-radius:50%}
+.ring div{position:relative;text-align:center}.ring strong{font-size:44px;display:block;line-height:1}.ring small{color:var(--mu)}
+.pill{display:inline-block;border:1px solid var(--ac);color:var(--ac);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700}
+.pol{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;border-top:1px solid var(--line);padding-top:16px}
+.pol>div{background:#ffffff08;border-radius:14px;padding:12px}.pol span{font-size:12px;color:var(--mu)}.pol b{display:block;font-size:19px;margin:5px 0 8px}.pol i{display:block;height:5px;border-radius:5px;background:#ffffff14;overflow:hidden}.pol i u{display:block;height:100%;background:var(--g);border-radius:5px}
+#trend{display:flex;align-items:flex-end;gap:3px;height:90px;margin-top:14px}#trend i{flex:1;border-radius:4px 4px 0 0;min-height:4px}
+.sm{font-size:12px;color:var(--mu)}
+.mem{display:flex;gap:10px;align-items:center;background:#ffffff08;border-radius:12px;padding:10px 12px;margin:8px 0}.mem span{flex:1}.mem button{background:none;border:0;color:#ff9b90;font-size:18px}
+.add{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+input.t,select{background:#0a1c13;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:11px;font:inherit;min-width:0}input.t{flex:1}
+.tip{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid #ffffff10;line-height:1.55;font-size:14px}.tip:last-child{border:0}.tip:before{content:"✓";color:var(--mint);font-weight:800}.tip em{font-style:normal;color:var(--mint);font-weight:700}
+.chat{background:#08180f;border:1px solid var(--line);border-radius:14px;padding:14px;min-height:120px;max-height:320px;overflow:auto;white-space:pre-wrap;line-height:1.65;font-size:14px;margin:12px 0}
+.ask{display:flex;background:#08180f;border:1px solid var(--line);border-radius:14px;padding:5px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.chips button{background:#ffffff0c;border:1px solid var(--line);color:var(--mu);border-radius:20px;padding:7px 12px;font-size:12px}
+.err{color:#ff9b90}
+footer{border-top:1px solid #ffffff18;padding:24px 0 40px;color:var(--mu);font-size:12px;line-height:1.7}
+html[lang=te] body{line-height:1.8}
+html[lang=te] h1{letter-spacing:0;font-size:clamp(28px,5vw,48px);line-height:1.35}
+html[lang=te] .eb,html[lang=te] .brand,html[lang=te] .tip em{letter-spacing:0;text-transform:none}
+html[lang=te] .btn,html[lang=te] .pill{line-height:1.5}
+@media(max-width:820px){.c7,.c5,.c6{grid-column:span 12}.pol{grid-template-columns:repeat(2,1fr)}.ring{width:124px;height:124px}.ring strong{font-size:36px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="nav"><div class="brand"><span class="logo">◉</span>Breathe<b>Wise</b></div>
+<div class="seg"><button id="bEn" class="on">English</button><button id="bTe">తెలుగు</button></div></nav>
+
+<header class="hero">
+<div class="eb" data-i="tag"></div>
+<h1 data-i="h1"></h1>
+<p data-i="sub"></p>
+<div class="sw"><div class="search"><span>⌕</span><input id="q" autocomplete="off" data-p="ph"><button class="gps" id="gps" data-i="gps"></button><button class="btn" id="go" data-i="check"></button></div><div class="sug" id="sug"></div></div>
+</header>
+
+<main class="grid">
+<section class="card c12">
+<div class="hd"><div><div class="eb" data-i="live"></div><h2 id="city">—</h2></div><button class="gps" id="ref" data-i="refresh"></button></div>
+<div class="aq" id="aq"></div>
+<div class="pol">
+<div><span>PM2.5</span><b id="pm25">—</b><i><u id="b1"></u></i></div>
+<div><span>PM10</span><b id="pm10">—</b><i><u id="b2"></u></i></div>
+<div><span>NO₂</span><b id="no2">—</b><i><u id="b3"></u></i></div>
+<div><span>O₃</span><b id="o3">—</b><i><u id="b4"></u></i></div>
+</div>
+<div style="margin-top:18px"><div class="eb" data-i="next24"></div><div id="trend"></div><p class="sm" id="best"></p></div>
+<p class="sm" id="upd"></p>
+</section>
+
+<section class="card c5">
+<h2 data-i="famT"></h2><p class="mu sm" data-i="famS"></p>
+<div id="mems"></div>
+<div class="add"><input class="t" id="mn" data-p="name"><select id="mt"></select><button class="btn" id="ma" data-i="add"></button></div>
+<h3 data-i="comm"></h3>
+<select id="commute" style="width:100%"></select>
+</section>
+
+<section class="card c7">
+<h2 data-i="planT"></h2><p class="mu sm" data-i="planS"></p>
+<div id="tips"></div>
+</section>
+
+<section class="card c12">
+<h2 data-i="askT"></h2><p class="mu sm">Gemini AI</p>
+<div class="chat" id="ans"></div>
+<div class="ask"><input id="qs" data-p="askPh"><button class="btn" id="ab" data-i="askB"></button></div>
+<div class="chips" id="chips"></div>
+<p class="sm" id="ast"></p>
+</section>
+</main>
+
+<footer><b>BreatheWise</b>
+<p data-i="disc"></p>
+<p>Data: Open-Meteo Geocoding + Air Quality API (CAMS model). US AQI, not CPCB AQI.</p></footer>
+</div>
+
+<script>
+//<![CDATA[
+const $=id=>document.getElementById(id);
+let chatted=false,lang="en",cur=null,mems=[],commute="transit";
+try{mems=JSON.parse(localStorage.getItem("bw_mems")||"[]");lang=localStorage.getItem("bw_lang")||"en";commute=localStorage.getItem("bw_commute")||"transit"}catch(e){}
+const L={
+en:{tag:"Your personal air companion",h1:"Breathe better. Live smarter.",sub:"Live air-quality guidance for you and your family — at home, outdoors and on the move.",ph:"Search a city",gps:"◎ My location",check:"Check AQI",live:"Modelled live data",refresh:"↻ Refresh",next24:"Next 24 hours (US AQI)",best:"Cleanest hour",famT:"Family profiles",famS:"Add the people you care for — advice adapts to each.",name:"Name",add:"Add",comm:"Usual commute",planT:"Your cleaner-day plan",planS:"Personalised for current conditions",askT:"Ask BreatheWise",askPh:"e.g. Is it safe to walk outside with my child?",askB:"Ask AI",disc:"Air-quality values are model estimates, not a substitute for official monitoring or medical advice. Follow local advisories during severe pollution.",loading:"Checking air quality…",bad:"Could not load AQI. Check the city and try again.",hello:"Hi! I’m BreatheWise. Ask about your local air quality and daily routine.",ai:"AI service is not connected. Deploy /api/assistant and set GEMINI_API_KEY.",think:"Thinking…",none:"No profiles yet — add one above.",model:"Model timestamp",gen:"General",cat:["Good","Moderate","Unhealthy for sensitive groups","Unhealthy","Very unhealthy","Hazardous"],
+types:{child:"Child",elder:"Older adult",asthma:"Asthma / lung condition",preg:"Pregnant",adult:"Healthy adult"},
+comms:{transit:"Public transport",car:"Private vehicle",walk:"Walk / cycle",home:"Mostly at home"},
+chips:["Is it safe to walk outside now?","Best time to exercise today?","Should I wear a mask?"],
+g:["Air is good — enjoy outdoor time and ventilate your home.","Acceptable air. Unusually sensitive people should watch for symptoms.","Reduce long, strenuous outdoor activity; ventilate when air improves.","Limit outdoor exertion; keep windows closed during peaks.","Stay indoors where possible; use a well-fitting N95/KN95 if you must go out.","Avoid outdoor exposure and follow official health advisories."],
+m:{child:"Keep play indoors or short and light; avoid busy roads.",elder:"Avoid long outdoor walks; take medicines as prescribed and watch for breathlessness.",asthma:"Keep your reliever inhaler handy and follow your doctor’s plan.",preg:"Limit time near traffic and smoke; talk to your doctor if you feel unwell.",adult:"Shift workouts indoors or to the cleanest hour."},
+c:{transit:"Wearing a mask while waiting at stops can reduce particle exposure.",car:"Use recirculated air in the car and keep windows up in traffic.",walk:"Choose quieter, greener routes away from heavy traffic.",home:"Cook with the exhaust fan on and avoid incense or smoke indoors."}},
+te:{tag:"మీ వ్యక్తిగత గాలి నాణ్యత సహాయకుడు",h1:"మెరుగ్గా శ్వాసించండి. తెలివిగా జీవించండి.",sub:"మీకూ మీ కుటుంబానికీ — ఇంట్లో, బయట, ప్రయాణంలో — లైవ్ గాలి నాణ్యత సూచనలు.",ph:"నగరం వెతకండి",gps:"◎ నా లొకేషన్",check:"AQI చూడండి",live:"మోడల్ ఆధారిత లైవ్ డేటా",refresh:"↻ రిఫ్రెష్",next24:"రాబోయే 24 గంటలు (US AQI)",best:"అత్యంత శుభ్రమైన గంట",famT:"కుటుంబ ప్రొఫైల్స్",famS:"మీరు చూసుకునే వారిని చేర్చండి — సూచనలు ప్రతి ఒక్కరికీ మారతాయి.",name:"పేరు",add:"చేర్చు",comm:"సాధారణ ప్రయాణం",planT:"మీ ఆరోగ్యకరమైన రోజు ప్రణాళిక",planS:"ప్రస్తుత పరిస్థితులకు తగినట్లు",askT:"BreatheWiseని అడగండి",askPh:"ఉదా: పిల్లలతో బయట నడవడం సురక్షితమేనా?",askB:"AIని అడగండి",disc:"గాలి నాణ్యత విలువలు మోడల్ అంచనాలు మాత్రమే; అధికారిక మానిటరింగ్ లేదా వైద్య సలహాకు ప్రత్యామ్నాయం కావు. తీవ్ర కాలుష్యంలో స్థానిక సూచనలు పాటించండి.",loading:"గాలి నాణ్యతను పరిశీలిస్తున్నాం…",bad:"AQI డేటా అందలేదు. నగరం పేరు చూసి మళ్లీ ప్రయత్నించండి.",hello:"నమస్కారం! నేను BreatheWise. మీ గాలి నాణ్యత, రోజువారీ ప్రణాళిక గురించి అడగండి.",ai:"AI సేవ కనెక్ట్ కాలేదు. /api/assistant డిప్లాయ్ చేసి GEMINI_API_KEY సెట్ చేయండి.",think:"ఆలోచిస్తున్నాం…",none:"ఇంకా ప్రొఫైల్స్ లేవు — పైన చేర్చండి.",model:"మోడల్ సమయం",gen:"సాధారణం",cat:["మంచిది","మధ్యస్థం","సున్నిత వర్గాలకు అనారోగ్యకరం","అనారోగ్యకరం","చాలా అనారోగ్యకరం","ప్రమాదకరం"],
+types:{child:"చిన్నారి",elder:"వృద్ధులు",asthma:"ఆస్తమా / ఊపిరితిత్తుల సమస్య",preg:"గర్భిణి",adult:"ఆరోగ్యవంతులైన పెద్దలు"},
+comms:{transit:"ప్రజా రవాణా",car:"సొంత వాహనం",walk:"నడక / సైకిల్",home:"ఎక్కువగా ఇంట్లో"},
+chips:["ఇప్పుడు బయట నడవడం సురక్షితమేనా?","ఈ రోజు వ్యాయామానికి మంచి సమయం?","మాస్క్ ధరించాలా?"],
+g:["గాలి బాగుంది — బయట సమయం గడపండి, ఇంట్లో గాలి ఆడనివ్వండి.","గాలి ఆమోదయోగ్యం. చాలా సున్నితమైన వారు లక్షణాలను గమనించండి.","ఎక్కువసేపు కష్టమైన బయటి కార్యకలాపాలు తగ్గించండి; గాలి మెరుగైనప్పుడు కిటికీలు తెరవండి.","బయట శ్రమ తగ్గించండి; కాలుష్యం ఎక్కువగా ఉన్నప్పుడు కిటికీలు మూసి ఉంచండి.","వీలైనంత వరకు ఇంట్లోనే ఉండండి; బయటకు వెళ్తే సరిపడే N95/KN95 మాస్క్ వాడండి.","బయట తిరగడం మానండి; అధికారిక ఆరోగ్య సూచనలు పాటించండి."],
+m:{child:"ఆటలు ఇంట్లో లేదా తక్కువసేపు, తేలికగా; రద్దీ రోడ్లకు దూరంగా.",elder:"ఎక్కువసేపు బయట నడక వద్దు; మందులు సూచించినట్లు వాడండి, ఊపిరి ఆడకపోతే గమనించండి.",asthma:"రిలీవర్ ఇన్హేలర్ దగ్గర ఉంచండి; డాక్టర్ ప్రణాళిక పాటించండి.",preg:"ట్రాఫిక్, పొగ దగ్గర ఉండటం తగ్గించండి; అసౌకర్యంగా ఉంటే డాక్టర్‌ను సంప్రదించండి.",adult:"వ్యాయామాన్ని ఇంట్లోకి లేదా అత్యంత శుభ్రమైన గంటకు మార్చండి."},
+c:{transit:"స్టాప్‌ల వద్ద వేచి ఉన్నప్పుడు మాస్క్ ధరిస్తే ధూళి కణాలు తగ్గుతాయి.",car:"కారులో రీసర్క్యులేట్ మోడ్ వాడండి; ట్రాఫిక్‌లో అద్దాలు ఎక్కించండి.",walk:"రద్దీ రోడ్లకు దూరంగా ప్రశాంతమైన, పచ్చని మార్గాలు ఎంచుకోండి.",home:"వంటప్పుడు ఎగ్జాస్ట్ ఫ్యాన్ వాడండి; ఇంట్లో అగరబత్తి, పొగ నివారించండి."}}};
+const COL=["#26c281","#e0b63a","#ef8c3a","#e0584d","#a45dbb","#8e3a4a"];
+const band=n=>n<=50?0:n<=100?1:n<=150?2:n<=200?3:n<=300?4:5;
+const T=()=>L[lang];
+
+function applyLang(){
+ const t=T();document.documentElement.lang=lang;
+ document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t[e.dataset.i]);
+ document.querySelectorAll("[data-p]").forEach(e=>e.placeholder=t[e.dataset.p]);
+ $("bEn").classList.toggle("on",lang=="en");$("bTe").classList.toggle("on",lang=="te");
+ $("mt").innerHTML=Object.entries(t.types).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+ $("commute").innerHTML=Object.entries(t.comms).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+ $("commute").value=commute;
+ $("chips").innerHTML=t.chips.map(c=>`<button>${c}</button>`).join("");
+ document.querySelectorAll("#chips button").forEach(b=>b.onclick=()=>{$("qs").value=b.textContent;ask()});
+ if(!chatted)$("ans").textContent=t.hello;
+ drawMems();if(cur){render();renameCity()}
+}
+function drawMems(){
+ const t=T();
+ $("mems").innerHTML=mems.length?mems.map((m,i)=>`<div class="mem"><span><b>${esc(m.n)}</b> · <span class="sm">${t.types[m.t]}</span></span><button data-d="${i}" aria-label="remove">✕</button></div>`).join(""):`<p class="sm">${t.none}</p>`;
+ document.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{mems.splice(+b.dataset.d,1);save();drawMems();tips()});
+}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function save(){try{localStorage.setItem("bw_mems",JSON.stringify(mems));localStorage.setItem("bw_commute",commute);localStorage.setItem("bw_lang",lang)}catch(e){}}
+
+function tips(){
+ if(!cur)return;const t=T(),b=band(cur.aqi);let h=[`<div class="tip"><span><em>${t.gen}:</em> ${t.g[b]}</span></div>`];
+ if(b>=1){mems.forEach(m=>{if(b>=2||["child","elder","asthma","preg"].includes(m.t)){h.push(`<div class="tip"><span><em>${esc(m.n)}:</em> ${t.m[m.t]}</span></div>`)}})}
+ if(b>=2)h.push(`<div class="tip"><span><em>${t.comms[commute]}:</em> ${t.c[commute]}</span></div>`);
+ if(cur.best)h.push(`<div class="tip"><span><em>${t.best}:</em> ${cur.best}</span></div>`);
+ $("tips").innerHTML=h.join("");
+}
+function render(){
+ const d=cur,t=T(),b=band(d.aqi),c=COL[b];
+ document.documentElement.style.setProperty("--ac",c);
+ $("city").textContent=d.gps?(lang=="te"?"మీ లొకేషన్":"Your location"):d.city;
+ $("aq").innerHTML=`<div class="ring" style="--p:${Math.min(d.aqi/300*100,100)}"><div><strong>${Math.round(d.aqi)}</strong><small>US AQI</small></div></div><div><span class="pill">${t.cat[b]}</span><h3>${t.g[b]}</h3></div>`;
+ const f=(id,v,mx,bid)=>{$(id).textContent=v==null?"—":v.toFixed(1)+" µg/m³";$(bid).style.width=Math.min((v||0)/mx*100,100)+"%"};
+ f("pm25",d.pm25,75,"b1");f("pm10",d.pm10,150,"b2");f("no2",d.no2,200,"b3");f("o3",d.o3,180,"b4");
+ $("trend").innerHTML=d.hrs.map((v,i)=>`<i title="${d.hl[i]} · ${Math.round(v)}" style="height:${Math.max(v/Math.max(...d.hrs,50)*100,5)}%;background:${COL[band(v)]}"></i>`).join("");
+ $("best").textContent=`${t.best}: ${d.best}`;
+ $("upd").textContent=`${t.model}: ${d.time} · Open-Meteo / CAMS`;
+ tips();
+}
+async function aqi(lat,lon,name,g){
+ $("aq").innerHTML=`<p class="mu">${T().loading}</p>`;
+ try{
+  const u=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi,pm2_5,pm10,nitrogen_dioxide,ozone&hourly=us_aqi&forecast_days=2&timezone=auto`;
+  const j=await fetch(u).then(r=>r.json()),c=j.current;if(!c||c.us_aqi==null)throw 0;
+  let i=Math.max(j.hourly.time.indexOf(c.time.slice(0,13)+":00"),0);
+  const hrs=j.hourly.us_aqi.slice(i,i+24).map(v=>v??0),hl=j.hourly.time.slice(i,i+24).map(x=>x.slice(11));
+  const m=hrs.indexOf(Math.min(...hrs));
+  cur={city:name,q:name,gps:!!g,lat,lon,aqi:c.us_aqi,pm25:c.pm2_5,pm10:c.pm10,no2:c.nitrogen_dioxide,o3:c.ozone,time:c.time.replace("T"," "),hrs,hl,best:hl[m]+" (AQI "+Math.round(hrs[m])+")"};
+  render();
+ }catch(e){$("aq").innerHTML=`<p class="err">${T().bad}</p>`}
+}
+async function renameCity(){
+ if(!cur||cur.gps)return;
+ try{const r=await geo(cur.q,5);if(!r.length)return;
+  r.sort((a,b)=>Math.hypot(a.latitude-cur.lat,a.longitude-cur.lon)-Math.hypot(b.latitude-cur.lat,b.longitude-cur.lon));
+  cur.city=r[0].name;$("city").textContent=cur.city}catch(e){}
+}
+async function geo(n,count=1){
+ const r=await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(n)+"&count="+count+"&language="+lang+"&format=json").then(r=>r.json());
+ return r.results||[];
+}
+async function go(){const n=$("q").value.trim();if(!n)return;$("sug").style.display="none";
+ try{const r=await geo(n);if(!r.length)throw 0;await aqi(r[0].latitude,r[0].longitude,r[0].name)}catch(e){$("aq").innerHTML=`<p class="err">${T().bad}</p>`}}
+let tm;
+$("q").oninput=()=>{clearTimeout(tm);const v=$("q").value.trim();if(v.length<2){$("sug").style.display="none";return}
+ tm=setTimeout(async()=>{try{const r=await geo(v,5);$("sug").innerHTML=r.map((p,i)=>`<button data-k="${i}">${esc(p.name)}${p.admin1?", "+esc(p.admin1):""} · ${esc(p.country||"")}</button>`).join("");
+  $("sug").style.display=r.length?"block":"none";
+  document.querySelectorAll("#sug button").forEach(b=>b.onclick=()=>{const p=r[+b.dataset.k];$("q").value=p.name;$("sug").style.display="none";aqi(p.latitude,p.longitude,p.name)})}catch(e){}},300)};
+$("q").onkeydown=e=>e.key=="Enter"&&go();$("go").onclick=go;
+$("gps").onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>aqi(p.coords.latitude,p.coords.longitude,"",true),()=>{$("aq").innerHTML=`<p class="err">${lang=="te"?"లొకేషన్ అనుమతి లేదు. నగరం వెతకండి.":"Location permission denied. Search for a city instead."}</p>`}):0;
+$("ref").onclick=()=>cur&&aqi(cur.lat,cur.lon,cur.city,cur.gps);
+$("bEn").onclick=()=>{lang="en";save();applyLang()};$("bTe").onclick=()=>{lang="te";save();applyLang()};
+$("ma").onclick=()=>{const n=$("mn").value.trim();if(!n)return;mems.push({n:n.slice(0,30),t:$("mt").value});$("mn").value="";save();drawMems();tips()};
+$("commute").onchange=e=>{commute=e.target.value;save();tips()};
+
+async function ask(){
+ const q=$("qs").value.trim();if(!q)return;const t=T();
+ const qLang=/[\u0C00-\u0C7F]/.test(q)?"te":lang;
+ if(!cur){$("ast").textContent=t.loading;return}
+ $("ast").textContent=t.think;
+ try{
+  const r=await fetch("/api/assistant",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:q,lang:qLang,aqi:{city:$("city").textContent,aqi:cur.aqi,pm2_5:cur.pm25,pm10:cur.pm10,no2:cur.no2,o3:cur.o3,best:cur.best},profile:{members:mems,commute,child:mems.some(m=>m.t=="child"),elder:mems.some(m=>m.t=="elder"),sensitive:mems.some(m=>m.t=="asthma"||m.t=="preg")}})});
+  const d=await r.json();if(!r.ok)throw 0;$("ans").textContent=d.answer;chatted=true;$("ast").textContent="";
+ }catch(e){$("ast").textContent=t.ai}
+}
+$("ab").onclick=ask;$("qs").onkeydown=e=>e.key=="Enter"&&ask();
+$("q").value="Hyderabad";applyLang();go();
+//]]>
+</script>
+</body>
+</html>
