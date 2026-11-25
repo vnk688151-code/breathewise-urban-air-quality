@@ -32,37 +32,68 @@ Give 3-5 concise, actionable suggestions. Do not diagnose, prescribe, guarantee 
     const models = [...new Set([
       (process.env.GEMINI_MODEL || "").trim(),
       "gemini-2.5-flash",
+      "gemini-2.5-flash-lite",
       "gemini-2.0-flash",
       "gemini-flash-latest"
     ].filter(Boolean))];
 
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
     let lastErr = "";
-    for (const model of models) {
-      const r = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    let overloaded = false;
+
+    for (let round = 0; round < 2; round++) {
+      overloaded = false;
+      for (const model of models) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 8000);
+        let r;
+        try {
+          r = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+              body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+              signal: ctrl.signal
+            }
+          );
+        } catch (e) {
+          clearTimeout(timer);
+          lastErr = `Timeout or network error (${model}).`;
+          overloaded = true;
+          continue;
         }
-      );
+        clearTimeout(timer);
 
-      if (r.ok) {
-        const d = await r.json();
-        const answer = (d.candidates?.[0]?.content?.parts || []).map(x => x.text || "").join("").trim();
-        if (answer) return res.status(200).json({ answer });
-        lastErr = `Empty answer from ${model} (possibly blocked).`;
-        continue;
+        if (r.ok) {
+          const d = await r.json();
+          const answer = (d.candidates?.[0]?.content?.parts || []).map(x => x.text || "").join("").trim();
+          if (answer) return res.status(200).json({ answer });
+          lastErr = `Empty answer from ${model} (possibly blocked).`;
+          continue;
+        }
+
+        const tx = await r.text();
+        lastErr = `Gemini ${r.status} (${model}): ${tx.slice(0, 200)}`;
+
+        // Key problems: other models will not help
+        if (r.status === 400 || r.status === 401 || r.status === 403) {
+          return res.status(502).json({ error: lastErr });
+        }
+        // Busy or temporary errors: try next model
+        if (r.status === 429 || r.status >= 500) overloaded = true;
       }
-
-      const tx = await r.text();
-      lastErr = `Gemini ${r.status} (${model}): ${tx.slice(0, 250)}`;
-      // Key problems: retrying other models will not help
-      if (r.status === 400 || r.status === 401 || r.status === 403) break;
+      if (!overloaded) break;
+      if (round === 0) await sleep(1200);
     }
 
+    if (overloaded) {
+      return res.status(503).json({ error: "Gemini is very busy right now. Please try again in a minute." });
+    }
     return res.status(502).json({ error: lastErr || "AI request failed." });
   } catch (e) {
     return res.status(502).json({ error: "Server error: " + e.message });
   }
 };
+
+module.exports.config = { maxDuration: 30 };
